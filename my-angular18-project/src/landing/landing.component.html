@@ -1,0 +1,48 @@
+<ng-container *ngIf="(dataLoaded$ | async) === false">
+  <div class="loading-container">
+    <mat-spinner diameter="75"></mat-spinner>
+  </div>
+</ng-container>
+<ng-container *ngIf="(dataLoaded$ | async) === true">
+  <div class="content">
+    <div class="search-container mb-3">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search product..."
+        (keyup)="onSearch($event)"
+      />
+    </div>
+    <table mat-table [dataSource]="(data$$ | async) || []">
+      <ng-container matColumnDef="productId">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let element">{{ element.productId }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Product</th>
+        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef>Category</th>
+        <td mat-cell *matCellDef="let element">{{ element.category }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef class="text-end">Price</th>
+        <td mat-cell *matCellDef="let element" class="text-end">
+          {{ element.price }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Description</th>
+        <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns"></tr>
+    </table>
+  </div>
+</ng-container>

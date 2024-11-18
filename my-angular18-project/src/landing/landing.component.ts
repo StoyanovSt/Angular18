@@ -3,13 +3,14 @@ import { Component } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProductInterface } from '../shared/product.interface';
+import { StyleChangeDirective } from '../shared/directives/style-change.directive';
 import { BehaviorSubject, combineLatestWith, map } from 'rxjs';
 
 @Component({
   selector: 'app-landing',
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.scss',
-  imports: [CommonModule, MatTableModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatTableModule, MatProgressSpinnerModule, StyleChangeDirective],
   standalone: true,
 })
 export class LandingComponent {

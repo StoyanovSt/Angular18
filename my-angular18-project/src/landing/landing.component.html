@@ -58,6 +58,11 @@
   <input
     type="text"
     autofocus
+    [appStyleChange]="{
+      backgroundColor: '#ccc',
+      padding: '2px 5px',
+      'border-radius': '5px'
+    }"
     class="edit-product-name-input"
     [value]="productToEdit?.name"
     (keyup)="editProductName($event)"

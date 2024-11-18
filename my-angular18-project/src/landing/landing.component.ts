@@ -15,7 +15,14 @@ import { BehaviorSubject, combineLatestWith, map } from 'rxjs';
 export class LandingComponent {
   private filter$ = new BehaviorSubject<string>('');
   private data$ = new BehaviorSubject<ProductInterface[]>([]);
-  data$$ = this.data$.asObservable();
+  public data$$ = this.data$.pipe(
+    combineLatestWith(this.filter$),
+    map(([products, filter]: [ProductInterface[], string]) => {
+      return filter.trim().length
+        ? products.filter((product: ProductInterface) => product.name.toLowerCase().startsWith(filter.toLowerCase()))
+        : products
+    })
+  );
   dataLoaded: boolean = false;
   columns: string[] = ['productId', 'name', 'category', 'price', 'description'];
   productToEdit: ProductInterface | null = null;
@@ -23,96 +30,16 @@ export class LandingComponent {
   constructor() {
     setTimeout(() => {
       this.data$.next([
-        {
-          productId: 101,
-          name: 'Wireless Bluetooth Headphones',
-          category: 'Electronics',
-          price: 59.99,
-          isInEditMode: false,
-          description:
-            'High-quality wireless Bluetooth headphones with noise cancellation.',
-        },
-        {
-          productId: 102,
-          name: 'Smartphone - 128GB Storage',
-          category: 'Electronics',
-          price: 499.99,
-          isInEditMode: false,
-          description:
-            'A fast and reliable smartphone with a 128GB storage capacity.',
-        },
-        {
-          productId: 103,
-          name: '4K Ultra HD TV - 55 inches',
-          category: 'Electronics',
-          price: 699.99,
-          isInEditMode: false,
-          description:
-            'Experience stunning visuals with this 55-inch 4K Ultra HD smart TV.',
-        },
-        {
-          productId: 104,
-          name: 'Gaming Laptop - 16GB RAM',
-          category: 'Computers',
-          price: 1299.99,
-          isInEditMode: false,
-          description:
-            'A high-performance gaming laptop with 16GB RAM and powerful graphics.',
-        },
-        {
-          productId: 105,
-          name: 'Electric Toothbrush - Smart Series',
-          category: 'Health & Beauty',
-          price: 89.99,
-          isInEditMode: false,
-          description:
-            'Smart electric toothbrush with customizable brushing modes and a timer.',
-        },
-        {
-          productId: 106,
-          name: 'Portable Power Bank - 10,000mAh',
-          category: 'Accessories',
-          price: 29.99,
-          isInEditMode: false,
-          description:
-            'Compact and powerful portable power bank with 10,000mAh capacity.',
-        },
-        {
-          productId: 107,
-          name: 'Stylish Leather Wallet',
-          category: 'Fashion',
-          price: 49.99,
-          isInEditMode: false,
-          description:
-            'Genuine leather wallet with multiple card slots and a sleek design.',
-        },
-        {
-          productId: 108,
-          name: 'Organic Green Tea - 30 Pack',
-          category: 'Food & Beverages',
-          price: 15.99,
-          isInEditMode: false,
-          description:
-            '100% organic green tea leaves in a convenient 30-pack box.',
-        },
-        {
-          productId: 109,
-          name: 'Bluetooth Speaker - Waterproof',
-          category: 'Electronics',
-          price: 39.99,
-          isInEditMode: false,
-          description:
-            'Waterproof Bluetooth speaker with excellent sound quality and portability.',
-        },
-        {
-          productId: 110,
-          name: 'Casual Sneakers - Size 10',
-          category: 'Footwear',
-          price: 69.99,
-          isInEditMode: false,
-          description:
-            'Comfortable and stylish sneakers, perfect for everyday use.',
-        },
+        { productId: 101, name: 'Wireless Bluetooth Headphones', category: 'Electronics', price: 59.99, isInEditMode: false, description: 'High-quality wireless Bluetooth headphones with noise cancellation.' },
+        { productId: 102, name: 'Smartphone - 128GB Storage', category: 'Electronics', price: 499.99, isInEditMode: false, description: 'A fast and reliable smartphone with 128GB storage.' },
+        { productId: 103, name: '4K Ultra HD TV - 55 inches', category: 'Electronics', price: 699.99, isInEditMode: false, description: 'Experience stunning visuals with this 55-inch 4K Ultra HD smart TV.' },
+        { productId: 104, name: 'Gaming Laptop - 16GB RAM', category: 'Computers', price: 1299.99, isInEditMode: false, description: 'A high-performance gaming laptop with 16GB RAM and powerful graphics.' },
+        { productId: 105, name: 'Electric Toothbrush - Smart Series', category: 'Health & Beauty', price: 89.99, isInEditMode: false, description: 'Smart electric toothbrush with customizable brushing modes and a timer.' },
+        { productId: 106, name: 'Portable Power Bank - 10,000mAh', category: 'Accessories', price: 29.99, isInEditMode: false, description: 'Compact and powerful portable power bank with 10,000mAh capacity.' },
+        { productId: 107, name: 'Stylish Leather Wallet', category: 'Fashion', price: 49.99, isInEditMode: false, description: 'Genuine leather wallet with multiple card slots and a sleek design.' },
+        { productId: 108, name: 'Organic Green Tea - 30 Pack', category: 'Food & Beverages', price: 15.99, isInEditMode: false, description: '100% organic green tea leaves in a convenient 30-pack box.' },
+        { productId: 109, name: 'Bluetooth Speaker - Waterproof', category: 'Electronics', price: 39.99, isInEditMode: false, description: 'Waterproof Bluetooth speaker with excellent sound quality and portability.' },
+        { productId: 110, name: 'Casual Sneakers - Size 10', category: 'Footwear', price: 69.99, isInEditMode: false, description: 'Comfortable and stylish sneakers, perfect for everyday use.' },
       ]);
       this.dataLoaded = true;
     }, 2000);
@@ -121,16 +48,6 @@ export class LandingComponent {
   public onSearchProduct(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.filter$.next(value);
-    this.data$$ = this.data$.pipe(
-      combineLatestWith(this.filter$),
-      map(([products, filter]: [ProductInterface[], string]) => {
-        return !filter.trim().length
-          ? products
-          : products.filter((product: ProductInterface) =>
-              product.name.toLowerCase().startsWith(filter.toLowerCase())
-            );
-      })
-    );
   }
 
   public setProductInEditMode(productId: number): void {
@@ -147,26 +64,26 @@ export class LandingComponent {
   }
 
   public editProductName(event: Event): void {
+    if (!this.productToEdit) return;
     const name = (event.target as HTMLInputElement).value;
-    if (this.productToEdit) this.productToEdit.name = name;
+    this.productToEdit.name = name;
   }
 
   public onBlur(): void {
     this.data$.next(
       this.data$.value.map((product: ProductInterface) => {
         if (product.isInEditMode) {
-          product.isInEditMode = false;
           return {
             ...product,
-            name:
-              this.productToEdit !== null
-                ? this.productToEdit.name
-                : product.name,
+            isInEditMode: false,
+            name: this.productToEdit?.name ?? product.name,
           };
         }
 
         return product;
       })
     );
+
+    this.productToEdit = null;
   }
 }

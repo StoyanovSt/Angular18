@@ -13,13 +13,12 @@ import { BehaviorSubject, combineLatestWith, map } from 'rxjs';
   standalone: true,
 })
 export class LandingComponent {
-  private filter$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  dataLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  columns: string[] = ['productId', 'name', 'category', 'price', 'description'];
-  private data$: BehaviorSubject<ProductInterface[]> = new BehaviorSubject<
-    ProductInterface[]
-  >([]);
+  private filter$ = new BehaviorSubject<string>('');
+  private data$ = new BehaviorSubject<ProductInterface[]>([]);
   data$$ = this.data$.asObservable();
+  dataLoaded: boolean = false;
+  columns: string[] = ['productId', 'name', 'category', 'price', 'description'];
+  productToEdit: ProductInterface | null = null;
 
   constructor() {
     setTimeout(() => {
@@ -29,6 +28,7 @@ export class LandingComponent {
           name: 'Wireless Bluetooth Headphones',
           category: 'Electronics',
           price: 59.99,
+          isInEditMode: false,
           description:
             'High-quality wireless Bluetooth headphones with noise cancellation.',
         },
@@ -37,6 +37,7 @@ export class LandingComponent {
           name: 'Smartphone - 128GB Storage',
           category: 'Electronics',
           price: 499.99,
+          isInEditMode: false,
           description:
             'A fast and reliable smartphone with a 128GB storage capacity.',
         },
@@ -45,6 +46,7 @@ export class LandingComponent {
           name: '4K Ultra HD TV - 55 inches',
           category: 'Electronics',
           price: 699.99,
+          isInEditMode: false,
           description:
             'Experience stunning visuals with this 55-inch 4K Ultra HD smart TV.',
         },
@@ -53,6 +55,7 @@ export class LandingComponent {
           name: 'Gaming Laptop - 16GB RAM',
           category: 'Computers',
           price: 1299.99,
+          isInEditMode: false,
           description:
             'A high-performance gaming laptop with 16GB RAM and powerful graphics.',
         },
@@ -61,6 +64,7 @@ export class LandingComponent {
           name: 'Electric Toothbrush - Smart Series',
           category: 'Health & Beauty',
           price: 89.99,
+          isInEditMode: false,
           description:
             'Smart electric toothbrush with customizable brushing modes and a timer.',
         },
@@ -69,6 +73,7 @@ export class LandingComponent {
           name: 'Portable Power Bank - 10,000mAh',
           category: 'Accessories',
           price: 29.99,
+          isInEditMode: false,
           description:
             'Compact and powerful portable power bank with 10,000mAh capacity.',
         },
@@ -77,6 +82,7 @@ export class LandingComponent {
           name: 'Stylish Leather Wallet',
           category: 'Fashion',
           price: 49.99,
+          isInEditMode: false,
           description:
             'Genuine leather wallet with multiple card slots and a sleek design.',
         },
@@ -85,6 +91,7 @@ export class LandingComponent {
           name: 'Organic Green Tea - 30 Pack',
           category: 'Food & Beverages',
           price: 15.99,
+          isInEditMode: false,
           description:
             '100% organic green tea leaves in a convenient 30-pack box.',
         },
@@ -93,6 +100,7 @@ export class LandingComponent {
           name: 'Bluetooth Speaker - Waterproof',
           category: 'Electronics',
           price: 39.99,
+          isInEditMode: false,
           description:
             'Waterproof Bluetooth speaker with excellent sound quality and portability.',
         },
@@ -101,26 +109,63 @@ export class LandingComponent {
           name: 'Casual Sneakers - Size 10',
           category: 'Footwear',
           price: 69.99,
+          isInEditMode: false,
           description:
             'Comfortable and stylish sneakers, perfect for everyday use.',
         },
       ]);
-      this.dataLoaded$.next(true);
+      this.dataLoaded = true;
     }, 2000);
   }
 
-  public onSearch(event: Event): void {
+  public onSearchProduct(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.filter$.next(value);
     this.data$$ = this.data$.pipe(
       combineLatestWith(this.filter$),
       map(([products, filter]: [ProductInterface[], string]) => {
-        const searchedData = !filter.trim().length
+        return !filter.trim().length
           ? products
-          : products.filter((p: ProductInterface) =>
-              p.name.toLowerCase().startsWith(filter.toLowerCase())
+          : products.filter((product: ProductInterface) =>
+              product.name.toLowerCase().startsWith(filter.toLowerCase())
             );
-        return searchedData;
+      })
+    );
+  }
+
+  public setProductInEditMode(productId: number): void {
+    this.data$.next(
+      this.data$.value.map((product: ProductInterface) => ({
+        ...product,
+        isInEditMode: product.productId === productId ? true : false,
+      }))
+    );
+    this.productToEdit =
+      this.data$.value.find(
+        (product: ProductInterface) => product.productId === productId
+      ) || null;
+  }
+
+  public editProductName(event: Event): void {
+    const name = (event.target as HTMLInputElement).value;
+    if (this.productToEdit) this.productToEdit.name = name;
+  }
+
+  public onBlur(): void {
+    this.data$.next(
+      this.data$.value.map((product: ProductInterface) => {
+        if (product.isInEditMode) {
+          product.isInEditMode = false;
+          return {
+            ...product,
+            name:
+              this.productToEdit !== null
+                ? this.productToEdit.name
+                : product.name,
+          };
+        }
+
+        return product;
       })
     );
   }

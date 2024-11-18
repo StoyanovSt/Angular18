@@ -4,4 +4,5 @@ export interface ProductInterface {
   category: string;
   price: number;
   description: string;
+  isInEditMode: boolean
 }

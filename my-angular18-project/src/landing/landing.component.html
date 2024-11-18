@@ -1,19 +1,19 @@
-<ng-container *ngIf="(dataLoaded$ | async) === false">
+<ng-container *ngIf="!dataLoaded">
   <div class="loading-container">
     <mat-spinner diameter="75"></mat-spinner>
   </div>
 </ng-container>
-<ng-container *ngIf="(dataLoaded$ | async) === true">
-  <div class="content">
+<ng-container *ngIf="dataLoaded">
+  <div *ngIf="data$$ | async as data" class="content">
     <div class="search-container mb-3">
       <input
         type="text"
         class="form-control"
         placeholder="Search product..."
-        (keyup)="onSearch($event)"
+        (keyup)="onSearchProduct($event)"
       />
     </div>
-    <table mat-table [dataSource]="(data$$ | async) || []">
+    <table mat-table [dataSource]="data">
       <ng-container matColumnDef="productId">
         <th mat-header-cell *matHeaderCellDef>ID</th>
         <td mat-cell *matCellDef="let element">{{ element.productId }}</td>
@@ -21,7 +21,15 @@
 
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Product</th>
-        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          (dblclick)="setProductInEditMode(element.productId)"
+        >
+          <ng-container *ngIf="!element.isInEditMode; else editProductMode">{{
+            element.name
+          }}</ng-container>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="category">
@@ -46,3 +54,14 @@
     </table>
   </div>
 </ng-container>
+<ng-template #editProductMode>
+  <input
+    type="text"
+    autofocus
+    class="edit-product-name-input"
+    [value]="productToEdit?.name"
+    (keyup)="editProductName($event)"
+    (keyup.enter)="onBlur()"
+    (blur)="onBlur()"
+  />
+</ng-template>

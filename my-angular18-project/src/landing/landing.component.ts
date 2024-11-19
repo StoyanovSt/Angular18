@@ -5,12 +5,17 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProductInterface } from '../shared/product.interface';
 import { StyleChangeDirective } from '../shared/directives/style-change.directive';
 import { BehaviorSubject, combineLatestWith, map } from 'rxjs';
+import { FormatNumberPipe } from '../shared/pipes/format-number.pipe';
 
 @Component({
   selector: 'app-landing',
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.scss',
-  imports: [CommonModule, MatTableModule, MatProgressSpinnerModule, StyleChangeDirective],
+  imports: [CommonModule, 
+    MatTableModule, 
+    MatProgressSpinnerModule, 
+    StyleChangeDirective, 
+    FormatNumberPipe],
   standalone: true,
 })
 export class LandingComponent {

@@ -1,8 +1,25 @@
 .content {
+  max-width: 1920px;
   padding: 1rem;
 
   .search-container {
     max-width: 230px;
+  }
+
+  table {
+    .cdk-drag {
+      display: table-row;
+      cursor: grab !important;
+    }
+
+    .cdk-drag-dragging {
+      cursor: move !important;
+    }
+
+    .cdk-drag-placeholder {
+      background: antiquewhite;
+      border: 2px dashed #000;
+    }
   }
 
   .edit-product-name-input {

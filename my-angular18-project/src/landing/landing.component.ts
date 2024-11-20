@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { ProductInterface } from '../shared/product.interface';
 import { StyleChangeDirective } from '../shared/directives/style-change.directive';
 import { BehaviorSubject, combineLatestWith, map } from 'rxjs';
@@ -15,7 +16,8 @@ import { FormatNumberPipe } from '../shared/pipes/format-number.pipe';
     MatTableModule, 
     MatProgressSpinnerModule, 
     StyleChangeDirective, 
-    FormatNumberPipe],
+    FormatNumberPipe, 
+    DragDropModule],
   standalone: true,
 })
 export class LandingComponent {
@@ -91,5 +93,16 @@ export class LandingComponent {
     );
 
     this.productToEdit = null;
+  }
+
+  public reorderRow(event:  CdkDragDrop<any>): void {
+    const data = this.data$.getValue();
+    const previousIndex = event.previousIndex;
+    const currentIndex = event.currentIndex;
+
+    const movedItem = data[previousIndex];
+    data.splice(previousIndex, 1);
+    data.splice(currentIndex, 0, movedItem);
+    this.data$.next([...data]);
   }
 }

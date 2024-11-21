@@ -39,10 +39,11 @@ export class LandingComponent {
   currentPage: number = 1;
   pageLimit: number = 3;
   totalEntities!: number;
+  allData: ProductInterface[] = [];
   
   constructor() {
     setTimeout(() => {
-      this.data$.next([
+      this.allData = [
         { productId: 101, name: 'Wireless Bluetooth Headphones', category: 'Electronics', price: 59.99, isInEditMode: false, description: 'High-quality wireless Bluetooth headphones with noise cancellation.' },
         { productId: 102, name: 'Smartphone - 128GB Storage', category: 'Electronics', price: 499.99, isInEditMode: false, description: 'A fast and reliable smartphone with 128GB storage.' },
         { productId: 103, name: '4K Ultra HD TV - 55 inches', category: 'Electronics', price: 699.99, isInEditMode: false, description: 'Experience stunning visuals with this 55-inch 4K Ultra HD smart TV.' },
@@ -53,8 +54,9 @@ export class LandingComponent {
         { productId: 108, name: 'Organic Green Tea - 30 Pack', category: 'Food & Beverages', price: 15.99, isInEditMode: false, description: '100% organic green tea leaves in a convenient 30-pack box.' },
         { productId: 109, name: 'Bluetooth Speaker - Waterproof', category: 'Electronics', price: 39.99, isInEditMode: false, description: 'Waterproof Bluetooth speaker with excellent sound quality and portability.' },
         { productId: 110, name: 'Casual Sneakers - Size 10', category: 'Footwear', price: 69.99, isInEditMode: false, description: 'Comfortable and stylish sneakers, perfect for everyday use.' },
-      ]);
-      this.totalEntities = this.data$.getValue().length;
+      ];
+      this.data$.next(this.allData.slice(0, this.pageLimit));
+      this.totalEntities = this.allData.length;
       this.dataLoaded = true;
     }, 2000);
   }
@@ -114,5 +116,13 @@ export class LandingComponent {
 
   public changePage(page: number): void {
     this.currentPage = page;
+        
+    if (this.currentPage === 1) {
+      this.data$.next(this.allData.slice(0, this.pageLimit));
+    } else {
+      const startIndex = (this.currentPage - 1) * this.pageLimit;
+      const endIndex = startIndex + this.pageLimit;
+      this.data$.next(this.allData.slice(startIndex, endIndex));
+    }
   }
 }

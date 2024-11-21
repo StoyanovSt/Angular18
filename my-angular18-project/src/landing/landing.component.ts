@@ -7,6 +7,7 @@ import { ProductInterface } from '../shared/product.interface';
 import { StyleChangeDirective } from '../shared/directives/style-change.directive';
 import { BehaviorSubject, combineLatestWith, map } from 'rxjs';
 import { FormatNumberPipe } from '../shared/pipes/format-number.pipe';
+import { TablePaginationComponent } from '../shared/table-pagination/pagination.component';
 
 @Component({
   selector: 'app-landing',
@@ -17,7 +18,8 @@ import { FormatNumberPipe } from '../shared/pipes/format-number.pipe';
     MatProgressSpinnerModule, 
     StyleChangeDirective, 
     FormatNumberPipe, 
-    DragDropModule],
+    DragDropModule, 
+    TablePaginationComponent],
   standalone: true,
 })
 export class LandingComponent {
@@ -34,7 +36,10 @@ export class LandingComponent {
   dataLoaded: boolean = false;
   columns: string[] = ['productId', 'name', 'category', 'price', 'description'];
   productToEdit: ProductInterface | null = null;
-
+  currentPage: number = 1;
+  pageLimit: number = 3;
+  totalEntities!: number;
+  
   constructor() {
     setTimeout(() => {
       this.data$.next([
@@ -49,6 +54,7 @@ export class LandingComponent {
         { productId: 109, name: 'Bluetooth Speaker - Waterproof', category: 'Electronics', price: 39.99, isInEditMode: false, description: 'Waterproof Bluetooth speaker with excellent sound quality and portability.' },
         { productId: 110, name: 'Casual Sneakers - Size 10', category: 'Footwear', price: 69.99, isInEditMode: false, description: 'Comfortable and stylish sneakers, perfect for everyday use.' },
       ]);
+      this.totalEntities = this.data$.getValue().length;
       this.dataLoaded = true;
     }, 2000);
   }
@@ -104,5 +110,9 @@ export class LandingComponent {
     data.splice(previousIndex, 1);
     data.splice(currentIndex, 0, movedItem);
     this.data$.next([...data]);
+  }
+
+  public changePage(page: number): void {
+    this.currentPage = page;
   }
 }

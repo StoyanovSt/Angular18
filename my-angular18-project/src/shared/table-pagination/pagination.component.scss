@@ -1,0 +1,64 @@
+.pagination {
+  display: inline-block;
+  padding-left: 0;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.25rem;
+
+  .page-item {
+    display: inline;
+
+    &:first-child {
+      .page-link {
+        margin-left: 0;
+        border-bottom-left-radius: 0.25rem;
+        border-top-left-radius: 0.25rem;
+      }
+    }
+    &:last-child {
+      .page-link {
+        border-bottom-right-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+      }
+    }
+    &.active {
+      .page-link,
+      .page-link:focus,
+      .page-link:hover {
+        z-index: 2;
+        color: #fff;
+        cursor: default;
+        background-color: #2a2627;
+        border-color: #2a2627;
+      }
+      .page-item.active .page-link,
+      .page-item.active .page-link:focus,
+      .page-item.active .page-link:hover {
+        z-index: 2;
+        color: #fff;
+        cursor: default;
+        background-color: #5cb85c;
+        border-color: #5cb85c;
+      }
+    }
+
+    .page-link {
+      position: relative;
+      float: left;
+      padding: 0.5rem 1rem;
+      margin-left: -1px;
+      color: #2a2627;
+      text-decoration: none;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      cursor: pointer;
+
+      &:focus,
+      &:hover {
+        color: #2a2627;
+        background-color: #eceeef;
+        border-color: #ddd;
+      }
+    }
+  }
+}

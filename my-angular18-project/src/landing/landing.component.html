@@ -64,6 +64,7 @@
       <tr mat-header-row *matHeaderRowDef="columns"></tr>
       <tr mat-row *matRowDef="let row; columns: columns" cdkDrag></tr>
     </table>
+    <app-pagination [currentPage]="currentPage" [pageLimit]="pageLimit" [totalEntities]="totalEntities" (changePage)="changePage($event)"></app-pagination>
   </div>
 </ng-container>
 <ng-template #editProductMode>

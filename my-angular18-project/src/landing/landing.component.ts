@@ -1,13 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
-import { ProductInterface } from '../shared/product.interface';
+import { ProductInterface } from '../shared/models/product.interface';
 import { StyleChangeDirective } from '../shared/directives/style-change.directive';
 import { BehaviorSubject, combineLatestWith, map } from 'rxjs';
 import { FormatNumberPipe } from '../shared/pipes/format-number.pipe';
 import { TablePaginationComponent } from '../shared/table-pagination/pagination.component';
+import { AlertComponent } from '../shared/alert/alert.component';
+import { AlertService } from '../shared/services/alert.service';
+import { AlertTypeEnum } from '../shared/enums/alert.enum';
 
 @Component({
   selector: 'app-landing',
@@ -19,10 +22,11 @@ import { TablePaginationComponent } from '../shared/table-pagination/pagination.
     StyleChangeDirective, 
     FormatNumberPipe, 
     DragDropModule, 
-    TablePaginationComponent],
+    TablePaginationComponent, AlertComponent],
   standalone: true,
 })
 export class LandingComponent {
+  private alertService = inject(AlertService);
   private filter$ = new BehaviorSubject<string>('');
   private data$ = new BehaviorSubject<ProductInterface[]>([]);
   public data$$ = this.data$.pipe(
@@ -112,6 +116,10 @@ export class LandingComponent {
     data.splice(previousIndex, 1);
     data.splice(currentIndex, 0, movedItem);
     this.data$.next([...data]);
+    this.alertService.setAlert({
+      type: AlertTypeEnum.success,
+      text: 'Successful row reordering!'
+    });
   }
 
   public changePage(page: number): void {

@@ -5,7 +5,7 @@
 </ng-container>
 <ng-container *ngIf="dataLoaded">
   <div *ngIf="data$$ | async as data" class="content">
-    <div class="search-container mb-3">
+    <div class="search-container">
       <input
         type="text"
         class="form-control"
@@ -13,6 +13,7 @@
         (keyup)="onSearchProduct($event)"
       />
     </div>
+    <span class="mb-1 d-block float-end">Number of reorders: {{numberOfReorders()}}</span>
     <app-alert></app-alert>
     <table
       mat-table

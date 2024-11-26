@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
@@ -44,6 +44,7 @@ export class LandingComponent {
   pageLimit: number = 3;
   totalEntities!: number;
   allData: ProductInterface[] = [];
+  numberOfReorders = signal<number>(0);
   
   constructor() {
     setTimeout(() => {
@@ -120,6 +121,7 @@ export class LandingComponent {
       type: AlertTypeEnum.success,
       text: 'Successful row reordering!'
     });
+    this.numberOfReorders.update(reorders => ++reorders);
   }
 
   public changePage(page: number): void {
@@ -132,5 +134,7 @@ export class LandingComponent {
       const endIndex = startIndex + this.pageLimit;
       this.data$.next(this.allData.slice(startIndex, endIndex));
     }
+
+    this.numberOfReorders.set(0);
   }
 }

@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { Component, Inject, inject, signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
@@ -11,6 +11,7 @@ import { TablePaginationComponent } from '../shared/table-pagination/pagination.
 import { AlertComponent } from '../shared/alert/alert.component';
 import { AlertService } from '../shared/services/alert.service';
 import { AlertTypeEnum } from '../shared/enums/alert.enum';
+import { ClickOutsideDirective } from '../shared/directives/click-outside.directive';
 
 @Component({
   selector: 'app-landing',
@@ -22,10 +23,13 @@ import { AlertTypeEnum } from '../shared/enums/alert.enum';
     StyleChangeDirective, 
     FormatNumberPipe, 
     DragDropModule, 
-    TablePaginationComponent, AlertComponent],
+    TablePaginationComponent, 
+    AlertComponent, 
+    ClickOutsideDirective],
   standalone: true,
 })
 export class LandingComponent {
+  public isMenuOpened: boolean = false;
   private alertService = inject(AlertService);
   private filter$ = new BehaviorSubject<string>('');
   private data$ = new BehaviorSubject<ProductInterface[]>([]);
@@ -46,7 +50,7 @@ export class LandingComponent {
   allData: ProductInterface[] = [];
   numberOfReorders = signal<number>(0);
   
-  constructor() {
+  constructor(@Inject(DOCUMENT) private document: Document) {
     setTimeout(() => {
       this.allData = [
         { productId: 101, name: 'Wireless Bluetooth Headphones', category: 'Electronics', price: 59.99, isInEditMode: false, description: 'High-quality wireless Bluetooth headphones with noise cancellation.' },
@@ -136,5 +140,13 @@ export class LandingComponent {
     }
 
     this.numberOfReorders.set(0);
+  }
+
+  public toggleMenu(): void {
+    this.isMenuOpened = !this.isMenuOpened;
+  }
+
+  clickedOutside() {
+    this.isMenuOpened = false;
   }
 }

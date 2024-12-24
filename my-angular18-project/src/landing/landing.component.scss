@@ -30,3 +30,28 @@
     width: 100%;
   }
 }
+.menu-container {
+  width: 200px;
+  background: #04aa6d;
+  font-size: 20px;
+
+  .menu-toggler {
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .menu {
+    background: #333;
+    color: #fff;
+    padding: 10px;
+
+    .menu-item {
+      cursor: pointer;
+      padding: 5px 0px;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
